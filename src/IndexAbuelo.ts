@@ -6,7 +6,6 @@ import { getCharacters } from './data/dataFetch';
 
 class AppContainer extends HTMLElement {
 	characters: any[] = [];
-	charactersContainer: HTMLDivElement | null = null;
 
 	constructor() {
 		super();
@@ -22,6 +21,23 @@ class AppContainer extends HTMLElement {
 	render() {
 		if (this.shadowRoot) {
 			this.shadowRoot.innerHTML = ``;
+
+			const css = this.ownerDocument.createElement("style");
+            css.textContent = `
+            .cards-container {
+                display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				width: 100%;
+				margin-left: 5%;
+            }   
+
+			.card-div{
+                margin-right: 2%;
+                margin-left: 2%;
+			}
+            `;
+			// Adjuntar el estilo al shadowRoot
+            this.shadowRoot?.appendChild(css);
 
 			//FORM
 			const form = document.createElement('form');
@@ -58,25 +74,34 @@ class AppContainer extends HTMLElement {
 	renderCharacters(DataCharacters: any) {
 		// Limpiar el contenedor de tarjetas antes de agregar nuevas tarjetas
 		this.shadowRoot?.querySelectorAll('character-card').forEach(card => card.remove());
-		
-		// Mapear las promesas y esperar su resolución
-		Promise.all(DataCharacters.map(async (user: any) => {
-			const episode = await getFirstEpisodeName(user.episode[0]);
-			const mycharacterElement = this.ownerDocument.createElement('character-card') as CharacterCard;
-			mycharacterElement.setAttribute(Attribute.image, user.image);
-			mycharacterElement.setAttribute(Attribute.name, user.name);
-			mycharacterElement.setAttribute(Attribute.status, user.status);
-			mycharacterElement.setAttribute(Attribute.species, user.species);
-			mycharacterElement.setAttribute(Attribute.type, user.type);
-			mycharacterElement.setAttribute(Attribute.origin, user.origin.name);
-			mycharacterElement.setAttribute(Attribute.firstepisodename, episode);
-			return mycharacterElement;
-		})).then(characters => {
-			// Una vez que todas las promesas se han resuelto, agregar los elementos al DOM
-			characters.forEach(character => {
-				this.shadowRoot?.appendChild(character);
+
+
+			Promise.all(DataCharacters.map(async (user: any) => {
+				const episode = await getFirstEpisodeName(user.episode[0]);
+				const mycharacterElement = this.ownerDocument.createElement('character-card') as CharacterCard;
+				mycharacterElement.setAttribute(Attribute.image, user.image);
+				mycharacterElement.setAttribute(Attribute.name, user.name);
+				mycharacterElement.setAttribute(Attribute.status, user.status);
+				mycharacterElement.setAttribute(Attribute.species, user.species);
+				mycharacterElement.setAttribute(Attribute.type, user.type);
+				mycharacterElement.setAttribute(Attribute.origin, user.origin.name);
+				mycharacterElement.setAttribute(Attribute.firstepisodename, episode);
+				mycharacterElement.setAttribute(Attribute.uid, String(user.id));
+				return mycharacterElement;
+			})).then(characters => {
+				// Una vez que todas las promesas se han resuelto, agregar los elementos al DOM
+				const cardsContainer = this.ownerDocument.createElement('div');
+				cardsContainer.className = 'cards-container';
+				characters.forEach(character => {
+					const carDiv = this.ownerDocument.createElement('div');
+					carDiv.className = 'card-div';
+					carDiv.appendChild(character);
+					cardsContainer.appendChild(carDiv);
+					
+				});
+				this.shadowRoot?.appendChild(cardsContainer)
 			});
-		});
+		
 	}
 
 }
