@@ -1,1 +1,1 @@
-export { default as character } from './Character/character';
+export { default as Film  } from './Film/Film'

@@ -1,17 +1,11 @@
 
-export const getCharacters = async (count: number) => {
+export const getFilms = async () => {
     try {
-        const DataCharacters: any[] = [];
-
-        for (let i = 1; i <= count; i++) {
-            const character = await fetch(`https://rickandmortyapi.com/api/character/${i}`)
-                .then((response) => response.json());
-            DataCharacters.push(character);
-        }
-
-        return DataCharacters;
+        const dataFilms = await fetch('https://ghibliapi.vercel.app/films').then((res) => res.json());
+        console.log(dataFilms)
+        return dataFilms
     } catch (error) {
-        console.error(error);
-        return [];
+        console.log('error', error)
+        return error
     }
 };

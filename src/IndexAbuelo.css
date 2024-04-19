@@ -3,6 +3,7 @@ body{
 	background-color: rgb(136, 136, 136);
 	width: 100%;
 	height: max-content;
+	margin-left: 5%
 }
 
 input {
@@ -12,3 +13,6 @@ input {
 
 }
 
+img{
+	width: 10%;
+}

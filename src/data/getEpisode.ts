@@ -1,13 +1,10 @@
-export const getFirstEpisodeName = async (url: string) => {
+export const getPeople = async (id: any) => {
     try {
-        const episodeData = await fetch(url).then((res) => res.json());
-        console.log(episodeData.name)
-        return episodeData.name;
-
+        const dataPeople = await fetch(`https://ghibliapi.vercel.app/people/${id}`).then((res) => res.json());
+        console.log(dataPeople)
+        return dataPeople
     } catch (error) {
-        console.error('Error al obtener datos del episodio:', error);
-        return 'Unknown';
+        console.log('error', error)
+        return error
     }
-}
-
-export default getFirstEpisodeName;
+};
